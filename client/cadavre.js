@@ -55,6 +55,7 @@ function initCanvas() {
 
 function draw() {
     ctx.clearRect(0, 0, width, height);
+	gameFrame();
     ctx.fillStyle = 'grey';
 	ctx.fillRect(5,5,width-10, height-10);
     ctx.fillStyle = 'white';
@@ -62,7 +63,7 @@ function draw() {
         width+'x'+height+', '+
         currentFrame, 50, 50);
     currentFrame++;
-    
+    drawParticles();
     if(!stopDrawLoop) {
         requestAnimationFrame(draw);
     }
@@ -117,10 +118,10 @@ function randomInt(min, max) {
 
 function keyPressed(e) {
     if(e.key == 'q' || e.key == 'ArrowLeft') {
-        player.x-=10;
+        
     }
     if(e.key == 'd' || e.key == 'ArrowRight') {
-        player.x+=10;
+        
     }
 }
 
