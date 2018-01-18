@@ -31,8 +31,8 @@ function drawCharacter(x, y, life, state) {
 		ctx.rotate(charSpiningCurrentTick/4);
 		charSpiningCurrentTick++;
 	}
-	ctx.fillStyle = 'pink';
-	graphic.setShadow(10, 'pink');
+	ctx.fillStyle = '#FFBBBB';
+	graphic.setShadow(10, '#FFBBBB');
 	ctx.fillRect(-characterProperties.size/2,
 				-characterProperties.size/2, 
 				characterProperties.size,
@@ -48,16 +48,26 @@ function drawCharacter(x, y, life, state) {
         y: y+Math.random()*10-5+characterProperties.size/2,
         dirx: 0,
         diry: 0,
-        color: 'pink',
-        size: Math.random()+0.1+1,
+        color: '#FFBBBB',
+        size: Math.random()+1.5,
     });
+}
+
+function drawCadavre(x, y, rot, col) {
+	ctx.save();
+	ctx.translate(x+characterProperties.size/2, y+characterProperties.size/2);
+	ctx.rotate(rot);
+	ctx.fillStyle = col;
+	ctx.fillRect(-characterProperties.size/2, 
+					-characterProperties.size/2,
+					characterProperties.size,
+					characterProperties.size);
+	ctx.restore();
 }
 
 function drawTile(x, y) {
 	ctx.fillStyle = '#4444EE';
-	graphic.setShadow(5, ctx.fillStyle);
 	ctx.fillRect(x, y, tilesProperties.size, tilesProperties.size);
-	graphic.setShadow(0);
 }
 
 function drawEnd(x, y) {

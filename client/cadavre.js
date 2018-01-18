@@ -22,6 +22,8 @@ let characterProperties = {
 	size: 20
 }
 
+let map;
+
 const CST = {
     CONSTANT_TEST: 'test',
     PARTICLES: {
@@ -35,7 +37,6 @@ const CST = {
 
 function launch() {   
     if(!ctx) {
-        console.log('launching profile blast');
         initCanvas();
     }
     currentFrame = 0;
@@ -78,13 +79,24 @@ function draw() {
 		', key:'+ jumpPressed
 		, 50, 50);
 	
+	
+	for(let i=0; i<16; i++){
+		for(let j=0; j<16; j++) {
+			drawTile(100+i*32, 100+j*32);
+		}
+	}
+	for(let i=0; i<1000; i++){
+		drawCadavre(
+			(Math.sin(i)*10000-Math.floor(Math.sin(i)*10000))*500+100,
+			(Math.sin(i+1000)*10000-Math.floor(Math.sin(i+1000)*10000))*500+100,
+			(Math.sin(i+2000)*10000-Math.floor(Math.sin(i+2000)*10000))*3.1,
+			'rgb(255,'+
+			((Math.sin(i)*10000-Math.floor(Math.sin(i)*10000))*40+180)+','+
+			((Math.sin(i+1)*10000-Math.floor(Math.sin(i+1)*10000))*40+180)+')'
+		);
+	}
 	drawCharacter(50, 100, 100, jumpPressed?characterState.JUMPING:null);
-	
 	drawEnd(300, 100);
-	
-	drawTile(100, 100);
-	drawTile(132, 100);
-	drawTile(164, 100);
 	//// 
     // fps
 	currentFrame++;
