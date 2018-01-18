@@ -5,7 +5,9 @@ let ctx;
 let width;
 let height;
 let currentFrame;
-
+let lastTick;
+let frameRate;
+let deltaTime;
 let stopDrawLoop;
 
 let particles;
@@ -18,10 +20,10 @@ let tilesProperties = {
 const CST = {
     CONSTANT_TEST: 'test',
     PARTICLES: {
-        GRAVITY: 0.5,
-        SPEED:6,
+        GRAVITY: -0.1,
+        SPEED:0.0,
         MAX_SIZE:4,
-        ENTROPY: 0.1,
+        ENTROPY: 0.05,
     },
 };
 
@@ -65,19 +67,23 @@ function draw() {
     ctx.fillStyle = 'white';
     ctx.fillText(
         width+'x'+height+', '+
+		'fps:'+Math.floor(frameRate)+', cf:'+
         currentFrame, 50, 50);
-    currentFrame++;
 	
 	drawCharacter(50, 100, 100);
 	
 	drawEnd(300, 100);
 	
 	drawTile(100, 100);
-	drawTile(100, 100);
-	drawTile(100, 100);
-	////
-	gameFrame();
+	drawTile(132, 100);
+	drawTile(164, 100);
+	//// 
+    // fps
+	currentFrame++;
+	getFPS();
 	
+	// graphics
+	gameFrame();
     drawParticles();
     
 	if(!stopDrawLoop) {
@@ -141,6 +147,15 @@ function keyPressed(e) {
     }
 }
 
+function getFPS() {
+    if(!lastTick){
+        lastTick = performance.now();
+        return;
+    }
+    deltaTime = (performance.now() - lastTick)/1000;
+    lastTick = performance.now();
+    frameRate = 1/deltaTime;
+}
 
 // PARTICLES //
 // public
