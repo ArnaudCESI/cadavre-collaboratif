@@ -13,9 +13,14 @@ let stopDrawLoop;
 let particles;
 let obsoleteParticles;
 
+let jumpPressed;
+
 let tilesProperties = {
 	size: 32
 };
+let characterProperties = {
+	size: 20
+}
 
 const CST = {
     CONSTANT_TEST: 'test',
@@ -49,6 +54,7 @@ function initCanvas() {
     
     // window events
 	window.addEventListener('keypress', keyPressed);
+	window.addEventListener('keyup', keyReleased);
     window.onresize = resizeCanvas;
 	
     // canvas size
@@ -66,11 +72,13 @@ function draw() {
 	ctx.fillRect(5,5,width-10, height-10);
     ctx.fillStyle = 'white';
     ctx.fillText(
-        width+'x'+height+', '+
-		'fps:'+Math.floor(frameRate)+', cf:'+
-        currentFrame, 50, 50);
+        width+'x'+height+
+		', fps:'+Math.floor(frameRate)+
+		', cf:'+ currentFrame+
+		', key:'+ jumpPressed
+		, 50, 50);
 	
-	drawCharacter(50, 100, 100);
+	drawCharacter(50, 100, 100, jumpPressed?characterState.JUMPING:null);
 	
 	drawEnd(300, 100);
 	
@@ -139,11 +147,18 @@ function randomInt(min, max) {
 
 
 function keyPressed(e) {
-    if(e.key == 'q' || e.key == 'ArrowLeft') {
-        
+    if(e.key == 'z' || 
+	   e.key == 'ArrowUp' || 
+	   e.key == ' ') {
+			jumpPressed = true;
     }
-    if(e.key == 'd' || e.key == 'ArrowRight') {
-        
+}
+
+function keyReleased(e) {
+	if(e.key == 'z' || 
+	   e.key == 'ArrowUp' || 
+	   e.key == ' ') {
+			jumpPressed = false;
     }
 }
 
