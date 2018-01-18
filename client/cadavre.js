@@ -11,6 +11,10 @@ let stopDrawLoop;
 let particles;
 let obsoleteParticles;
 
+let tilesProperties = {
+	size: 32
+};
+
 const CST = {
     CONSTANT_TEST: 'test',
     PARTICLES: {
@@ -18,7 +22,7 @@ const CST = {
         SPEED:6,
         MAX_SIZE:4,
         ENTROPY: 0.1,
-    }
+    },
 };
 
 
@@ -55,7 +59,7 @@ function initCanvas() {
 
 function draw() {
     ctx.clearRect(0, 0, width, height);
-	gameFrame();
+	//// debug
     ctx.fillStyle = 'grey';
 	ctx.fillRect(5,5,width-10, height-10);
     ctx.fillStyle = 'white';
@@ -63,8 +67,20 @@ function draw() {
         width+'x'+height+', '+
         currentFrame, 50, 50);
     currentFrame++;
+	
+	drawCharacter(50, 100, 100);
+	
+	drawEnd(300, 100);
+	
+	drawTile(100, 100);
+	drawTile(100, 100);
+	drawTile(100, 100);
+	////
+	gameFrame();
+	
     drawParticles();
-    if(!stopDrawLoop) {
+    
+	if(!stopDrawLoop) {
         requestAnimationFrame(draw);
     }
 }
@@ -127,7 +143,7 @@ function keyPressed(e) {
 
 
 // PARTICLES //
-
+// public
 function drawParticles() {
     for(let i = 0; i<particles.length; i++) {
         // move
@@ -150,17 +166,18 @@ function drawParticles() {
     removeParticles();
 }
 
+function addSparkles(x, y, color, size, power) {
+    for(let i =0; i<size; i++) {
+        addParticle(x, y, color, power);
+    }
+}
+
+// privates
 function removeParticles() {
     for(let i of obsoleteParticles) {
         particles.splice(i, 1);
     }
     obsoleteParticles = [];
-}
-
-function addSparkles(x, y, color, size, power) {
-    for(let i =0; i<size; i++) {
-        addParticle(x, y, color, power);
-    }
 }
 
 function addParticle(x, y, color, power) {
