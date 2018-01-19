@@ -22,9 +22,26 @@ function setDeath(x, y, path, level) {
 	});
 }
 
+/*
+getDeaths(deaths => {
+	let myDeaths = deaths;
+});
+*/
 function getDeaths(callback) {
 	$.get(server+'/api/cadavres', data => {
 		console.log(data);
+		callback(JSON.parse(data));
 	});
 }
 
+/*
+getMap(map => {
+	let myMap = map;
+});
+*/
+function getMap(callback) {
+	$.get(server+'/api/map', data => {
+		console.log(data);
+		callback(JSON.parse(data));
+	});
+}
