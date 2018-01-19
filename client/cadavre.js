@@ -46,6 +46,12 @@ function launch() {
     
 	// launch
     stopDrawLoop = false;
+
+    getMap(function(data){
+
+        map = data;
+    });
+
     draw();
 }
 
@@ -241,4 +247,20 @@ function getRandomVector(magMax) {
         x: Math.cos(angle) * mag,
         y: Math.sin(angle) * mag,
     }
+}
+
+function getMapCoordArray(jsonMap) {
+
+    let coordArray = [];
+
+    const jsonData = jsonMap.layers[0].data;
+
+    for (let i = 0; i < jsonData.length; i++){
+        if(i%jsonMap.width==0) {
+            coordArray[i/jsonMap.width] = [];
+        }
+        coordArray[(i - i % jsonMap.width) / jsonMap.width][i % jsonMap.width] = jsonData[i];
+    }
+
+    return coordArray;
 }
