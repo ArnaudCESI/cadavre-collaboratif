@@ -15,6 +15,8 @@ let obsoleteParticles;
 
 let jumpPressed;
 
+let player;
+
 let tilesProperties = {
 	size: 32
 };
@@ -54,10 +56,16 @@ function launch() {
     getMap(function(data){
 
         map = data;
-        map.coord = getMapCoordArray(map);
+        map.coord = getMapCoordArray(map)
+        player = initPhysicObject(map.begin.x,
+            map.begin.y,
+            20,
+            {
+                x: 0, y:0
+            });
     });
 
-    draw();
+    mainLoop();
 }
 
 function initCanvas() {
@@ -75,9 +83,10 @@ function initCanvas() {
     resizeCanvas();
 }
 
+
 // MAIN LOOP //
 
-function draw() {
+function mainLoop() {
     ctx.clearRect(0, 0, width, height);
 	//// debug
     ctx.fillStyle = 'white';
@@ -95,16 +104,18 @@ function draw() {
 	// graphics
 	gameFrame();
 	drawMap();
+	drawCharacter(player);
     drawParticles();
     
 	if(!stopDrawLoop) {
-        requestAnimationFrame(draw);
+        requestAnimationFrame(mainLoop);
     }
 }
 
 // GAME MECHANICS //
 function gameFrame() {
-	
+	// player physic
+    applyPhysic(player);
 }
 
 

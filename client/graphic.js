@@ -24,9 +24,12 @@ state:
 	-DEFAULT (default): standing still
 	-JUMPING: is in the air
 */
-function drawCharacter(x, y, life, state) {
+function drawCharacter(obj) {
+	if(!obj) {
+		return;
+	}
 	ctx.save();
-	ctx.translate(x+characterProperties.size/2, y+characterProperties.size/2);
+	ctx.translate(obj.x+characterProperties.size/2, obj.y+characterProperties.size/2);
 	if(state == characterState.JUMPING) {
 		ctx.rotate(charSpiningCurrentTick/4);
 		charSpiningCurrentTick++;
@@ -44,8 +47,8 @@ function drawCharacter(x, y, life, state) {
 	ctx.restore();
 	
     particles.push({
-        x: x+Math.random()*10-5+characterProperties.size/2,
-        y: y+Math.random()*10-5+characterProperties.size/2,
+        x: obj.x+Math.random()*10-5+characterProperties.size/2,
+        y: obj.y+Math.random()*10-5+characterProperties.size/2,
         dirx: 0,
         diry: 0,
         color: '#FFBBBB',
