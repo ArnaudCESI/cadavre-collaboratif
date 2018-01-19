@@ -18,15 +18,15 @@ let cadavres;
 let player;
 
 let tilesProperties = {
-	size: 32
+    size: 32
 };
 let characterProperties = {
-	size: 20
+    size: 20
 }
 
 let offset = {
-   x:0,
-   y:0,
+    x:0,
+    y:0,
 };
 let map;
 
@@ -37,51 +37,58 @@ const CST = {
         MAX_SIZE:4,
         ENTROPY: 0.05,
     },
-	GRAVITY: 0.5
+    GRAVITY: 0.5,
+    SPEEDLIMIT: 16,
 };
 
 
-function launch() {   
+function launch() {
     if(!ctx) {
         initCanvas();
     }
     currentFrame = 0;
-    
+
     particles = [];
     obsoleteParticles = [];
-    
-	// launch
+
+    // launch
     stopDrawLoop = false;
 
     getMap(function(data){
         map = data;
         map.coord = getMapCoordArray(map);
-		map.objects = getMapObjects(map);
+        map.objects = getMapObjects(map);
         player = initPhysicObject(
-			map.objects.begin.x,
+            map.objects.begin.x,
             map.objects.begin.y,
             characterProperties.size,
-            {x: 0, y:0});
+            {x: 0, y:0},
+            [
+                {
+                    dx: 0,
+                    dy: 0
+                }
+            ]);
     });
-	
-	
-	getNewDeath();
-	
+
+
+    getNewDeath();
+
     mainLoop();
 }
 
 function initCanvas() {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
-    
+
     // window events
-	window.addEventListener('keypress', keyPressed);
-	window.addEventListener('keyup', keyReleased);
+    window.addEventListener('keypress', keyPressed);
+    window.addEventListener('keyup', keyReleased);
     window.onresize = resizeCanvas;
-	
+
     // canvas size
-	width = canvas.width = (window.innerWidth);
-	height = canvas.height = (window.innerHeight);
+    width = canvas.width = (window.innerWidth);
+    height = canvas.height = (window.innerHeight);
     resizeCanvas();
 }
 
@@ -90,60 +97,60 @@ function initCanvas() {
 
 function mainLoop() {
     ctx.clearRect(0, 0, width, height);
-	//// debug
+    //// debug
     ctx.fillStyle = 'white';
     ctx.fillText(
         width+'x'+height+
-		', fps:'+Math.floor(frameRate)+
-		', cf:'+ currentFrame+
-		', key:'+ jumpPressed
-		, 50, 50);
-	ctx.fillText(
-		'offsetx :'+ offset.x +
-		', offsety :'+ offset.y
-		, 50, 75);
-		
+        ', fps:'+Math.floor(frameRate)+
+        ', cf:'+ currentFrame+
+        ', key:'+ jumpPressed
+        , 50, 50);
+    ctx.fillText(
+        'offsetx :'+ offset.x +
+        ', offsety :'+ offset.y
+        , 50, 75);
+
     // fps
-	currentFrame++;
-	getFPS();
-	
-	// graphics
-	if(map) {
-		gameFrame();
-		drawMap();
-		drawEnd(map.objects.end);
-		drawCharacter(player);
-	}
-	if(cadavres) {
-		for(let c of cadavres) {
-			drawCadavre(c);
-		}
-	}
-	
+    currentFrame++;
+    getFPS();
+
+    // graphics
+    if(map) {
+        gameFrame();
+        drawMap();
+        drawEnd(map.objects.end);
+        drawCharacter(player);
+    }
+    if(cadavres) {
+        for(let c of cadavres) {
+            drawCadavre(c);
+        }
+    }
+
     drawParticles();
-    
-	if(!stopDrawLoop) {
+
+    if(!stopDrawLoop) {
         requestAnimationFrame(mainLoop);
     }
 }
 
 // GAME MECHANICS //
 function gameFrame() {
-	// player physic
+    // player physic
     applyPhysic(player);
 }
 
 function onDeath() {
-	getNewDeath(new Date());
+    getNewDeath(new Date());
 }
 
 function getNewDeath(date) {
-	getDeaths(date, data=>{
-		cadavres = data;
-		for(let c of cadavres){
-			cadavreCluster(c);
-		}
-	});
+    getDeaths(date, data=>{
+        cadavres = data;
+        for(let c of cadavres){
+            addCadavretoCluster(c);
+        }
+    });
 }
 
 // UTILS //
@@ -165,18 +172,18 @@ function getRandomColor() {
 }
 
 function min(a1, a2) {
-	if(a1<=a2) return a1;
-	return a2;
+    if(a1<=a2) return a1;
+    return a2;
 }
 
 function max(a1, a2) {
-	if(a1>=a2) return a1;
-	return a2;
+    if(a1>=a2) return a1;
+    return a2;
 }
 
 function inbound(x1, y1, x2, y2, size) {
     if(x1 > x2-size/2 && x1 < x2+size/2 &&
-      y1 > y2 -size/2 && y1 < y2+size/2) {
+        y1 > y2 -size/2 && y1 < y2+size/2) {
         return true;
     }
     return false;
@@ -197,18 +204,18 @@ function randomInt(min, max) {
 
 
 function keyPressed(e) {
-    if(e.key == 'z' || 
-	   e.key == 'ArrowUp' || 
-	   e.key == ' ') {
-			jumpPressed = true;
+    if(e.key == 'z' ||
+        e.key == 'ArrowUp' ||
+        e.key == ' ') {
+        jumpPressed = true;
     }
 }
 
 function keyReleased(e) {
-	if(e.key == 'z' || 
-	   e.key == 'ArrowUp' || 
-	   e.key == ' ') {
-			jumpPressed = false;
+    if(e.key == 'z' ||
+        e.key == 'ArrowUp' ||
+        e.key == ' ') {
+        jumpPressed = false;
     }
 }
 
@@ -232,15 +239,15 @@ function drawParticles() {
         particles[i].y += particles[i].diry;
         particles[i].size -= CST.PARTICLES.ENTROPY;
         // outbound
-        if(particles[i].size <= 0 || 
-           outbound(particles[i].x, particles[i].y)) {
+        if(particles[i].size <= 0 ||
+            outbound(particles[i].x, particles[i].y)) {
             obsoleteParticles.push(i);
         }
         // draw
         ctx.beginPath();
         ctx.fillStyle = particles[i].color;
-        ctx.fillRect(particles[i].x-offset.x, particles[i].y-offset.y, 
-                     particles[i].size, particles[i].size);
+        ctx.fillRect(particles[i].x-offset.x, particles[i].y-offset.y,
+            particles[i].size, particles[i].size);
         ctx.fill();
     }
     removeParticles();
@@ -298,14 +305,14 @@ function getMapCoordArray(jsonMap) {
 }
 
 function getMapObjects(jsonMap) {
-	let objects = {};
-	// get objects layers
-	for(let layer of jsonMap.layers){
-		if(layer.type=='objectgroup') {
-			for(let obj of layer.objects) {
-				objects[obj.type] = obj;
-			}
-		}
-	}
-	return objects;
+    let objects = {};
+    // get objects layers
+    for(let layer of jsonMap.layers){
+        if(layer.type=='objectgroup') {
+            for(let obj of layer.objects) {
+                objects[obj.type] = obj;
+            }
+        }
+    }
+    return objects;
 }
