@@ -1,6 +1,6 @@
 'use strict';
 
-const server = 'http://192.168.43.18:3000'
+const server = 'http://localhost:3000'
 
 function setDeath(x, y, path, level) {
 	$.ajax({
@@ -27,10 +27,21 @@ getDeaths(deaths => {
 	let myDeaths = deaths;
 });
 */
-function getDeaths(callback) {
-	$.get(server+'/api/cadavres', data => {
-		console.log(data);
-		callback(JSON.parse(data));
+function getDeaths(date, callback) {
+	$.ajax({
+		type:'GET',
+		url:server+'/api/cadavres', 
+		data:{
+			date: date
+		}, 
+		success: data => {
+			console.log(data);
+			callback(data);
+		},
+		error: (msg) => {
+			console.log('error:'+JSON.stringify(msg));
+		}, 
+		dataType:'json'
 	});
 }
 
@@ -41,7 +52,7 @@ getMap(map => {
 */
 function getMap(callback) {
 	$.get(server+'/api/map', data => {
-		console.log(data);
+		// console.log(data);
 		callback(JSON.parse(data));
 	});
 }

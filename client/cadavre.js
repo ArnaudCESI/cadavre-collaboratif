@@ -14,7 +14,7 @@ let particles;
 let obsoleteParticles;
 
 let jumpPressed;
-
+let cadavres;
 let player;
 
 let tilesProperties = {
@@ -31,13 +31,13 @@ let offset = {
 let map;
 
 const CST = {
-    CONSTANT_TEST: 'test',
     PARTICLES: {
         GRAVITY: -0.1,
         SPEED:0.0,
         MAX_SIZE:4,
         ENTROPY: 0.05,
     },
+	GRAVITY: 0.5
 };
 
 
@@ -54,17 +54,19 @@ function launch() {
     stopDrawLoop = false;
 
     getMap(function(data){
-
         map = data;
-        map.coord = getMapCoordArray(map)
-        player = initPhysicObject(map.begin.x,
-            map.begin.y,
-            20,
-            {
-                x: 0, y:0
-            });
+        map.coord = getMapCoordArray(map);
+		map.objects = getMapObjects(map);
+        player = initPhysicObject(
+			map.objects.begin.x,
+            map.objects.begin.y,
+            characterProperties.size,
+            {x: 0, y:0});
     });
-
+	
+	
+	getNewDeath();
+	
     mainLoop();
 }
 
@@ -96,15 +98,28 @@ function mainLoop() {
 		', cf:'+ currentFrame+
 		', key:'+ jumpPressed
 		, 50, 50);
-
+	ctx.fillText(
+		'offsetx :'+ offset.x +
+		', offsety :'+ offset.y
+		, 50, 75);
+		
     // fps
 	currentFrame++;
 	getFPS();
 	
 	// graphics
-	gameFrame();
-	drawMap();
-	drawCharacter(player);
+	if(map) {
+		gameFrame();
+		drawMap();
+		drawEnd(map.objects.end);
+		drawCharacter(player);
+	}
+	if(cadavres) {
+		for(let c of cadavres) {
+			drawCadavre(c);
+		}
+	}
+	
     drawParticles();
     
 	if(!stopDrawLoop) {
@@ -118,7 +133,18 @@ function gameFrame() {
     applyPhysic(player);
 }
 
+function onDeath() {
+	getNewDeath(new Date());
+}
 
+function getNewDeath(date) {
+	getDeaths(date, data=>{
+		cadavres = data;
+		for(let c of cadavres){
+			cadavreCluster(c);
+		}
+	});
+}
 
 // UTILS //
 function resizeCanvas() {
@@ -136,6 +162,16 @@ function getRandomColor() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+}
+
+function min(a1, a2) {
+	if(a1<=a2) return a1;
+	return a2;
+}
+
+function max(a1, a2) {
+	if(a1>=a2) return a1;
+	return a2;
 }
 
 function inbound(x1, y1, x2, y2, size) {
@@ -203,7 +239,7 @@ function drawParticles() {
         // draw
         ctx.beginPath();
         ctx.fillStyle = particles[i].color;
-        ctx.fillRect(particles[i].x, particles[i].y, 
+        ctx.fillRect(particles[i].x-offset.x, particles[i].y-offset.y, 
                      particles[i].size, particles[i].size);
         ctx.fill();
     }
@@ -259,4 +295,17 @@ function getMapCoordArray(jsonMap) {
     }
 
     return coordArray;
+}
+
+function getMapObjects(jsonMap) {
+	let objects = {};
+	// get objects layers
+	for(let layer of jsonMap.layers){
+		if(layer.type=='objectgroup') {
+			for(let obj of layer.objects) {
+				objects[obj.type] = obj;
+			}
+		}
+	}
+	return objects;
 }

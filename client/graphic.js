@@ -25,21 +25,18 @@ state:
 	-JUMPING: is in the air
 */
 function drawCharacter(obj) {
-	if(!obj) {
-		return;
-	}
 	ctx.save();
-	ctx.translate(obj.x+characterProperties.size/2, obj.y+characterProperties.size/2);
-	if(state == characterState.JUMPING) {
+	ctx.translate(obj.x+obj.size/2-offset.x, obj.y+obj.size/2-offset.y);
+	if(obj.state == characterState.JUMPING) {
 		ctx.rotate(charSpiningCurrentTick/4);
 		charSpiningCurrentTick++;
 	}
 	ctx.fillStyle = '#FFBBBB';
 	graphic.setShadow(10, '#FFBBBB');
-	ctx.fillRect(-characterProperties.size/2,
-				-characterProperties.size/2, 
-				characterProperties.size,
-				characterProperties.size);
+	ctx.fillRect(-obj.size/2,
+				-obj.size/2, 
+				obj.size,
+				obj.size);
 	graphic.setShadow(5, 'red');
 	ctx.fillStyle = 'red',
 	ctx.fillRect(-3, -3, 6, 6);
@@ -47,8 +44,8 @@ function drawCharacter(obj) {
 	ctx.restore();
 	
     particles.push({
-        x: obj.x+Math.random()*10-5+characterProperties.size/2,
-        y: obj.y+Math.random()*10-5+characterProperties.size/2,
+        x: obj.x+Math.random()*10-5+obj.size/2,
+        y: obj.y+Math.random()*10-5+obj.size/2,
         dirx: 0,
         diry: 0,
         color: '#FFBBBB',
@@ -56,43 +53,40 @@ function drawCharacter(obj) {
     });
 }
 
-function drawCadavre(x, y, rot, col) {
+function drawCadavre(cadavre) {
 	ctx.save();
-	ctx.translate(x+characterProperties.size/2, y+characterProperties.size/2);
-	ctx.rotate(rot);
-	ctx.fillStyle = col;
-	ctx.fillRect(-characterProperties.size/2, 
-					-characterProperties.size/2,
-					characterProperties.size,
-					characterProperties.size);
+	ctx.translate(cadavre.x+characterProperties.size/2-offset.x, cadavre.y+characterProperties.size/2-offset.y);
+	ctx.rotate(cadavre.rot);
+	ctx.fillStyle = cadavre.color;
+	ctx.fillRect(-cadavre.size/2, 
+					-cadavre.size/2,
+					cadavre.size,
+					cadavre.size);
 	ctx.restore();
 }
 
 function drawTile(x, y) {
 	ctx.fillStyle = '#4444EE';
-	ctx.fillRect(x, y, tilesProperties.size, tilesProperties.size);
+	ctx.fillRect(x-offset.x, y-offset.y, tilesProperties.size, tilesProperties.size);
 }
 
-function drawEnd(x, y) {
+function drawEnd(end) {
 	ctx.fillStyle = 'white';
 	graphic.setShadow(10, ctx.fillStyle);
-	ctx.fillRect(x-20, y-20, 40, 40);
+	ctx.fillRect(end.x-end.width/2-offset.x, end.y-end.height/2-offset.y, 
+	end.width, end.height);
 	graphic.setShadow(0);
 }
 
 function drawMap(){
+	let startTileX = Math.floor(offset.x/tilesProperties.size);
+	let startTileY = Math.floor(offset.y/tilesProperties.size);
+	
+	for(let i = max(0, startTileY) ; i < min(Math.floor(startTileY+height/tilesProperties.size)+1, map.height); i++){
 
-	if(!map || !map.coord){
-
-		return;
-	}
-
-	for(let i = 0; i < map.height; i++){
-
-        for(let j = 0; j < map.width; j++){
+        for(let j = max(0, startTileX) ; j < min(Math.floor(startTileX+width/tilesProperties.size)+1, map.width); j++){
 
         	if(map.coord[i][j] == 1){
-
                 drawTile(j*tilesProperties.size, i*tilesProperties.size);
 			}
 		}
