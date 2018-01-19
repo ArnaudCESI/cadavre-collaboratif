@@ -1,6 +1,6 @@
 'use strict';
 
-const server = 'http://10.169.130.103:3000'
+const server = 'http://192.168.43.18:3000'
 
 function setDeath(x, y, path, level) {
 	$.ajax({

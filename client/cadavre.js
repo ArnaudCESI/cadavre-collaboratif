@@ -22,6 +22,10 @@ let characterProperties = {
 	size: 20
 }
 
+let offset = {
+   x:0,
+   y:0,
+};
 let map;
 
 const CST = {
@@ -46,6 +50,13 @@ function launch() {
     
 	// launch
     stopDrawLoop = false;
+
+    getMap(function(data){
+
+        map = data;
+        map.coord = getMapCoordArray(map);
+    });
+
     draw();
 }
 
@@ -69,8 +80,6 @@ function initCanvas() {
 function draw() {
     ctx.clearRect(0, 0, width, height);
 	//// debug
-    ctx.fillStyle = 'grey';
-	ctx.fillRect(5,5,width-10, height-10);
     ctx.fillStyle = 'white';
     ctx.fillText(
         width+'x'+height+
@@ -78,32 +87,14 @@ function draw() {
 		', cf:'+ currentFrame+
 		', key:'+ jumpPressed
 		, 50, 50);
-	
-	
-	for(let i=0; i<16; i++){
-		for(let j=0; j<16; j++) {
-			drawTile(100+i*32, 100+j*32);
-		}
-	}
-	for(let i=0; i<2000; i++){
-		drawCadavre(
-			(Math.sin(i)*10000-Math.floor(Math.sin(i)*10000))*500+100,
-			(Math.sin(i+1000)*10000-Math.floor(Math.sin(i+1000)*10000))*500+100,
-			(Math.sin(i+2000)*10000-Math.floor(Math.sin(i+2000)*10000))*3.1,
-			'rgb('+((Math.sin(i+200)*10000-Math.floor(Math.sin(i+200)*10000))*40+200)+','+
-			((Math.sin(i)*10000-Math.floor(Math.sin(i)*10000))*70+160)+','+
-			((Math.sin(i+100)*10000-Math.floor(Math.sin(i+100)*10000))*70+160)+')'
-		);
-	}
-	drawCharacter(50, 100, 100, jumpPressed?characterState.JUMPING:null);
-	drawEnd(300, 100);
-	//// 
+
     // fps
 	currentFrame++;
 	getFPS();
 	
 	// graphics
 	gameFrame();
+	drawMap();
     drawParticles();
     
 	if(!stopDrawLoop) {
@@ -241,4 +232,20 @@ function getRandomVector(magMax) {
         x: Math.cos(angle) * mag,
         y: Math.sin(angle) * mag,
     }
+}
+
+function getMapCoordArray(jsonMap) {
+
+    let coordArray = [];
+
+    const jsonData = jsonMap.layers[0].data;
+
+    for (let i = 0; i < jsonData.length; i++){
+        if(i%jsonMap.width==0) {
+            coordArray[i/jsonMap.width] = [];
+        }
+        coordArray[(i - i % jsonMap.width) / jsonMap.width][i % jsonMap.width] = jsonData[i];
+    }
+
+    return coordArray;
 }

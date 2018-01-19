@@ -76,3 +76,24 @@ function drawEnd(x, y) {
 	ctx.fillRect(x-20, y-20, 40, 40);
 	graphic.setShadow(0);
 }
+
+function drawMap(){
+
+	if(!map || !map.coord){
+
+		return;
+	}
+
+	for(let i = 0; i < map.height; i++){
+
+        for(let j = 0; j < map.width; j++){
+
+        	if(map.coord[i][j] == 1){
+
+                drawTile(j*tilesProperties.size, i*tilesProperties.size);
+			}
+		}
+	}
+}
+
+
