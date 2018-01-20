@@ -58,10 +58,10 @@ function drawCadavre(cadavre) {
 	ctx.translate(cadavre.x+characterProperties.size/2-offset.x, cadavre.y+characterProperties.size/2-offset.y);
 	ctx.rotate(cadavre.rot);
 	ctx.fillStyle = cadavre.color;
-	ctx.fillRect(-cadavre.size/2, 
-					-cadavre.size/2,
-					cadavre.size,
-					cadavre.size);
+	ctx.fillRect(-characterProperties.size/2, 
+					-characterProperties.size/2,
+					characterProperties.size,
+					characterProperties.size);
 	ctx.restore();
 }
 

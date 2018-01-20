@@ -1,6 +1,6 @@
 'use strict';
 
-const server = 'http://localhost:3000'
+const server = 'https://cadavres-api.herokuapp.com'
 
 function setDeath(x, y, path, level) {
 	$.ajax({
@@ -27,12 +27,13 @@ getDeaths(deaths => {
 	let myDeaths = deaths;
 });
 */
-function getDeaths(date, callback) {
+function getDeaths(date, level, callback) {
 	$.ajax({
 		type:'GET',
 		url:server+'/api/cadavres', 
 		data:{
-			date: date
+			date: date,
+			level: level,
 		}, 
 		success: data => {
 			console.log(data);
@@ -50,9 +51,20 @@ getMap(map => {
 	let myMap = map;
 });
 */
-function getMap(callback) {
-	$.get(server+'/api/map', data => {
-		// console.log(data);
-		callback(JSON.parse(data));
+function getMap(callback, level) {
+	$.ajax({
+		type:'GET',
+		url:server+'/api/map', 
+		data:{
+			level: level
+		}, 
+		success: data => {
+			console.log(data);
+			callback(data);
+		},
+		error: (msg) => {
+			console.log('error:'+JSON.stringify(msg));
+		}, 
+		dataType:'json'
 	});
 }

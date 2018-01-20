@@ -23,7 +23,7 @@ let tilesProperties = {
 let characterProperties = {
     size: 20
 }
-
+let levelName = '0';
 let offset = {
     x:0,
     y:0,
@@ -51,6 +51,7 @@ function launch() {
     particles = [];
     obsoleteParticles = [];
 
+	cadavres = [];
     // launch
     stopDrawLoop = false;
 
@@ -69,8 +70,8 @@ function launch() {
                     dy: characterProperties.size / 2
                 }
             ]);
-    });
-
+    }, levelName);
+	
 
     getNewDeath();
 
@@ -145,9 +146,10 @@ function onDeath() {
 }
 
 function getNewDeath(date) {
-    getDeaths(date, data=>{
-        cadavres = data;
-        for(let c of cadavres){
+    getDeaths(date, levelName, data=>{
+        for(let c of data){
+			cadavres.push(c);
+			// add to cluster
             addCadavretoCluster(c);
         }
     });
