@@ -1,6 +1,12 @@
 'use strict';
 
 let cadavreCluster = [];
+const ORI = {
+	BOTTOM: 1,
+	RIGHT: 0,
+	TOP: 3,
+	LEFT: 2,
+};
 
 function applyPhysic(obj){
 
@@ -10,30 +16,18 @@ function applyPhysic(obj){
 
     //Check collisions
     for(let point of obj.points) {
-
-        if(iscollided(point.dx + obj.x + obj.vector.x, point.dy + obj.y + obj.vector.y)){
-
-            obj.vector.x = 0;
-            obj.vector.y = 0;
-        }
+		for(let ori of point.orientations) {
+			let col = getCollisionDistance(point.dx + obj.x, point.dy + obj.y, obj.vector, ori);
+			if(col) {
+				obj.vector.x = col.x;
+				obj.vector.y = col.y;
+			}
+		}
     }
 
     //Check limite
-    if(obj.vector.x > CST.SPEEDLIMIT){
-        obj.vector.x = CST.SPEEDLIMIT;
-    }
-
-    if(obj.vector.x < -CST.SPEEDLIMIT){
-        obj.vector.x = -CST.SPEEDLIMIT;
-    }
-
-    if(obj.vector.y > CST.SPEEDLIMIT){
-        obj.vector.y = CST.SPEEDLIMIT;
-    }
-
-    if(obj.vector.y < -CST.SPEEDLIMIT){
-        obj.vector.y = -CST.SPEEDLIMIT;
-    }
+	obj.vector.x = constrain(obj.vector.x, -CST.SPEEDLIMIT, CST.SPEEDLIMIT);
+	obj.vector.y = constrain(obj.vector.y, -CST.SPEEDLIMIT, CST.SPEEDLIMIT);
 
     obj.x += obj.vector.x;
     obj.y += obj.vector.y;
@@ -56,7 +50,7 @@ function initPhysicObject(x, y, size, vector, points) {
         vector: vector,
         points: points,
         gravity: {
-            x:0,
+            x: 4,
             y: CST.GRAVITY
         }
     }
@@ -66,8 +60,49 @@ function addCadavretoCluster(cadavre) {
 
 }
 
-function iscollided(x, y){
+/*
+return false if no collision next tick.
+return distance between collision point and point otherwise , as a vector (.x, .y)
+*/
+function getCollisionDistance(x, y, vector, orientation){
+	if(orientation == ORI.BOTTOM) {
+		if(isCollided(x,y+vector.y)) {
+			return {
+				x: vector.x,
+				y: Math.floor((y+vector.y)/32) * 32 - y,
+			};			
+		}
+	} else if(orientation == ORI.RIGHT) {
+		if(isCollided(x+vector.x,y-1)) {
+			return {
+				x: Math.floor((x+vector.x)/32) * 32 - x,
+				y: vector.y,
+			};			
+		}
+	} else if(orientation == ORI.TOP) {
+		if(isCollided(x,y+vector.y)) {
+			return {
+				x: vector.x,
+				y: Math.floor((y+vector.y)/32) * 32 - y,
+			};			
+		}
+	} else if(orientation == ORI.LEFT) {
+		if(isCollided(x+vector.x,y-1)) {
+			return {
+				x: Math.floor((x+vector.x)/32) * 32 - x,
+				y: vector.y,
+			};			
+		}
+	}
+	return false;
+}
 
+function isCollided(x, y){
+	// out of bound
+	if(x<0 || y<0 || x/tilesProperties.size>map.width || y/tilesProperties.size>map.height) {
+		return false;
+	}
+	// tiles
     if(map.coord[Math.floor(y / tilesProperties.size)][Math.floor(x / tilesProperties.size)] === 1){
         return true;
     }

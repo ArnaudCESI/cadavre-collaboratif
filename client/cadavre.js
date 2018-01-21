@@ -25,7 +25,7 @@ let characterProperties = {
 }
 let levelName = '0';
 let offset = {
-    x:0,
+    x:-30,
     y:0,
 };
 let map;
@@ -61,14 +61,15 @@ function launch() {
         map.objects = getMapObjects(map);
         player = initPhysicObject(
             map.objects.begin.x,
-            map.objects.begin.y,
+            map.objects.begin.y-80,
             characterProperties.size,
             {x: 0, y:0},
             [
                 {
                     dx: characterProperties.size / 2,
-                    dy: characterProperties.size / 2
-                }
+                    dy: characterProperties.size / 2,
+					orientations: [ORI.RIGHT, ORI.BOTTOM]
+                },
             ]);
     }, levelName);
 	
@@ -97,6 +98,13 @@ function initCanvas() {
 // MAIN LOOP //
 
 function mainLoop() {
+	// fps
+    currentFrame++;
+    getFPS();
+	
+	if(map) {
+		gameFrame();
+	}
     ctx.clearRect(0, 0, width, height);
     //// debug
     ctx.fillStyle = 'white';
@@ -111,13 +119,9 @@ function mainLoop() {
         ', offsety :'+ offset.y
         , 50, 75);
 
-    // fps
-    currentFrame++;
-    getFPS();
-
     // graphics
     if(map) {
-        gameFrame();
+        
         drawMap();
         drawEnd(map.objects.end);
         drawCharacter(player);
@@ -181,6 +185,12 @@ function min(a1, a2) {
 function max(a1, a2) {
     if(a1>=a2) return a1;
     return a2;
+}
+
+function constrain(a, min, max) {
+	if(a<min) return min;
+	if(a>max) return max;
+	return a;
 }
 
 function inbound(x1, y1, x2, y2, size) {

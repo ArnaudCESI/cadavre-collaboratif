@@ -26,7 +26,7 @@ state:
 */
 function drawCharacter(obj) {
 	ctx.save();
-	ctx.translate(obj.x+obj.size/2-offset.x, obj.y+obj.size/2-offset.y);
+	ctx.translate(obj.x-offset.x, obj.y-offset.y);
 	if(obj.state == characterState.JUMPING) {
 		ctx.rotate(charSpiningCurrentTick/4);
 		charSpiningCurrentTick++;
@@ -43,9 +43,15 @@ function drawCharacter(obj) {
 	graphic.setShadow(0);
 	ctx.restore();
 	
+	// test: draw collision point
+	for(let p of obj.points) {
+		ctx.fillStyle = 'red';
+		ctx.fillRect(obj.x+p.dx-2-offset.x, obj.y+p.dy-2-offset.y, 4, 4);
+	}
+	
     particles.push({
-        x: obj.x+Math.random()*10-5+obj.size/2,
-        y: obj.y+Math.random()*10-5+obj.size/2,
+        x: obj.x+Math.random()*10-5,
+        y: obj.y+Math.random()*10-5,
         dirx: 0,
         diry: 0,
         color: '#FFBBBB',
