@@ -43,17 +43,19 @@ points:
 ]
  */
 function initPhysicObject(x, y, size, vector, points) {
-    return {
+    let o = {
         x: x,
         y: y,
         size: size,
         vector: vector,
         points: points,
         gravity: {
-            x: 4,
+            x: 0.1,
             y: CST.GRAVITY
         }
-    }
+    };
+	physicObjects.push(o);
+	return o;
 }
 
 function addCadavretoCluster(cadavre) {
@@ -66,7 +68,8 @@ return distance between collision point and point otherwise , as a vector (.x, .
 */
 function getCollisionDistance(x, y, vector, orientation){
 	if(orientation == ORI.BOTTOM) {
-		if(isCollided(x,y+vector.y)) {
+		if(isCollided(x-1,y+vector.y)) {
+			jumpAmount = 1; // reset jumps
 			return {
 				x: vector.x,
 				y: Math.floor((y+vector.y)/32) * 32 - y,
@@ -83,13 +86,13 @@ function getCollisionDistance(x, y, vector, orientation){
 		if(isCollided(x,y+vector.y)) {
 			return {
 				x: vector.x,
-				y: Math.floor((y+vector.y)/32) * 32 - y,
+				y: Math.floor((y+vector.y)/32) * 32 + 32 - y,
 			};			
 		}
 	} else if(orientation == ORI.LEFT) {
 		if(isCollided(x+vector.x,y-1)) {
 			return {
-				x: Math.floor((x+vector.x)/32) * 32 - x,
+				x: Math.floor((x+vector.x)/32) * 32 + 32- x,
 				y: vector.y,
 			};			
 		}

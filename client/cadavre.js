@@ -13,9 +13,12 @@ let stopDrawLoop;
 let particles;
 let obsoleteParticles;
 
+let jumpAmount;
 let jumpPressed;
 let cadavres;
 let player;
+
+let physicObjects = [];
 
 let tilesProperties = {
     size: 32
@@ -61,7 +64,7 @@ function launch() {
         map.objects = getMapObjects(map);
         player = initPhysicObject(
             map.objects.begin.x,
-            map.objects.begin.y-80,
+            map.objects.begin.y,
             characterProperties.size,
             {x: 0, y:0},
             [
@@ -69,6 +72,11 @@ function launch() {
                     dx: characterProperties.size / 2,
                     dy: characterProperties.size / 2,
 					orientations: [ORI.RIGHT, ORI.BOTTOM]
+                },
+				{
+                    dx: -characterProperties.size / 2,
+                    dy: characterProperties.size / 2,
+					orientations: [ORI.LEFT, ORI.BOTTOM]
                 },
             ]);
     }, levelName);
@@ -141,8 +149,13 @@ function mainLoop() {
 
 // GAME MECHANICS //
 function gameFrame() {
-    // player physic
-    applyPhysic(player);
+    // controls
+	applyControls();
+	
+	// physics
+	for(let o of physicObjects) {
+		applyPhysic(o);
+	}
 }
 
 function onDeath() {
@@ -157,6 +170,14 @@ function getNewDeath(date) {
             addCadavretoCluster(c);
         }
     });
+}
+
+function applyControls(){
+	if(jumpPressed && jumpAmount > 0) {
+		jumpAmount -= 1;
+		player.state = characterState.JUMPING;
+		player.vector.y = -10;
+	}
 }
 
 // UTILS //
