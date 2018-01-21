@@ -42,6 +42,9 @@ const CST = {
     },
     GRAVITY: 0.5,
     SPEEDLIMIT: 16,
+	JUMP_POWER: 15, // TODO: 8 ?
+	AUTOMATIC_RUN_ACC: 0.3,
+	AUTOMATIC_RUN_MAX_SPEED: 6,
 };
 
 
@@ -152,10 +155,17 @@ function gameFrame() {
     // controls
 	applyControls();
 	
+	// automatic walk
+	player.vector.x += CST.AUTOMATIC_RUN_ACC;
+	if(player.vector.x > CST.AUTOMATIC_RUN_MAX_SPEED) player.vector.x = CST.AUTOMATIC_RUN_MAX_SPEED;
+	
 	// physics
 	for(let o of physicObjects) {
 		applyPhysic(o);
 	}
+	
+	// camera
+	setCameraOffset(player);
 }
 
 function onDeath() {
@@ -175,9 +185,17 @@ function getNewDeath(date) {
 function applyControls(){
 	if(jumpPressed && jumpAmount > 0) {
 		jumpAmount -= 1;
-		player.state = characterState.JUMPING;
-		player.vector.y = -10;
+		player.vector.y = -CST.JUMP_POWER;
 	}
+}
+
+function setCameraOffset(obj) {
+	if(obj.x-offset.x>width*0.7) offset.x+=Math.abs(obj.vector.x);
+	if(obj.x-offset.x<width*0.3) offset.x-=Math.abs(obj.vector.x);
+	if(obj.y-offset.y<height*0.3) offset.y-=Math.abs(obj.vector.y);
+	if(obj.y-offset.y>height*0.7) offset.y+=Math.abs(obj.vector.y);
+	offset.x = Math.floor(offset.x);
+	offset.y = Math.floor(offset.y);
 }
 
 // UTILS //
