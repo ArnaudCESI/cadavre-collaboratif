@@ -86,7 +86,7 @@ function launch() {
     }, levelName);
 	
 
-    getNewDeath();
+    getNewDeaths();
 
     mainLoop();
 }
@@ -166,10 +166,13 @@ function gameFrame() {
 }
 
 function onDeath() {
-    getNewDeath(new Date());
+    setDeath(player.x, player.y, player.rot, 'red', '', levelName);
+    getNewDeaths(new Date());
+    player.x = map.objects.begin.x;
+    player.y = map.objects.begin.y;
 }
 
-function getNewDeath(date) {
+function getNewDeaths(date) {
     getDeaths(date, levelName, data=>{
         for(let c of data){
 			cadavres.push(c);

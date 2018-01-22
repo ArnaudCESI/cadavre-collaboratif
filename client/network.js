@@ -1,9 +1,9 @@
 'use strict';
 
-const server = 'https://cadavres-api.herokuapp.com'
-//const server = 'http://localhost:3000'
+//const server = 'https://cadavres-api.herokuapp.com'
+const server = 'http://localhost:3000'
 
-function setDeath(x, y, path, level) {
+function setDeath(x, y, rotation, color, path, level) {
 	$.ajax({
 		type:'POST',
 		url:server+'/api/cadavres/add', 
@@ -12,6 +12,8 @@ function setDeath(x, y, path, level) {
 			y: y,
 			path: path,
 			level: level,
+            rot:rotation,
+            color: color,
 		}, 
 		success: data => {
 			console.log(data);

@@ -28,9 +28,11 @@ function drawCharacter(obj) {
 	ctx.save();
 	ctx.translate(obj.x-offset.x, obj.y-offset.y);
 	if(obj.state == characterState.JUMPING) {
-		ctx.rotate(charSpiningCurrentTick/4);
-		charSpiningCurrentTick++;
-	}
+		obj.rot+=0.25;
+	} else {
+        obj.rot = 0;
+    }
+    ctx.rotate(obj.rot);
 	ctx.fillStyle = '#FFBBBB';
 	graphic.setShadow(10, '#FFBBBB');
 	ctx.fillRect(-obj.size/2,

@@ -23,9 +23,9 @@ function applyControls(){
             player.vector.x += CST.AUTOMATIC_RUN_ACC;
     }
     
-    // stop the "slooooow" momentum
-    if(Math.abs(player.vector.x) < CST.AUTOMATIC_RUN_ACC) {
-        player.vector.x = 0;
+    // die
+    if(controls.isActive(controls.CONTROLS.DIE)) {
+        onDeath();
     }
 }
 
@@ -34,6 +34,7 @@ let controls = (function(){
         JUMP: 1,
         RIGHT: 2,
         LEFT: 3,
+        DIE: 4,
     };
     const KEY_MAPPING = {
         'z':CONTROLS.JUMP,
@@ -41,6 +42,7 @@ let controls = (function(){
         ' ':CONTROLS.JUMP,
         'ArrowLeft':CONTROLS.LEFT,
         'ArrowRight':CONTROLS.RIGHT,
+        'r':CONTROLS.DIE,
     };
     
     let activeControls = [];

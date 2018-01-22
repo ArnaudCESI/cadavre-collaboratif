@@ -26,6 +26,11 @@ function applyPhysic(obj){
 		}
     }
 
+    // stop the "slooooow" momentum
+    if(Math.abs(obj.vector.x) < CST.AUTOMATIC_RUN_ACC) {
+        obj.vector.x = 0;
+    }
+    
     //Check limite
 	obj.vector.x = constrain(obj.vector.x, -CST.SPEEDLIMIT.X, CST.SPEEDLIMIT.X);
 	obj.vector.y = constrain(obj.vector.y, -CST.SPEEDLIMIT.Y, CST.SPEEDLIMIT.Y);
