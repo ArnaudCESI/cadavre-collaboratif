@@ -88,9 +88,9 @@ function drawMap(){
 	let startTileX = Math.floor(offset.x/tilesProperties.size);
 	let startTileY = Math.floor(offset.y/tilesProperties.size);
 	
-	for(let i = max(0, startTileY) ; i < min(Math.floor(startTileY+height/tilesProperties.size)+1, map.height); i++){
+	for(let i = max(0, startTileY) ; i < min(Math.floor(startTileY+height/tilesProperties.size)+2, map.height); i++){
 
-        for(let j = max(0, startTileX) ; j < min(Math.floor(startTileX+width/tilesProperties.size)+1, map.width); j++){
+        for(let j = max(0, startTileX) ; j < min(Math.floor(startTileX+width/tilesProperties.size)+2, map.width); j++){
 
         	if(map.coord[i][j] == 1){
                 drawTile(j*tilesProperties.size, i*tilesProperties.size);

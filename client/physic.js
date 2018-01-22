@@ -17,7 +17,8 @@ function applyPhysic(obj){
     //Check collisions
     for(let point of obj.points) {
 		for(let ori of point.orientations) {
-			let col = getCollisionDistance(point.dx + obj.x, point.dy + obj.y, obj.vector, ori, obj);
+			//let col = getCollisionDistance(point.dx + obj.x, point.dy + obj.y, obj.vector, ori, obj);
+            let col = getCollisionDistance(point, ori, obj);
 			if(col) {
 				obj.vector.x = col.x;
 				obj.vector.y = col.y;
@@ -26,8 +27,8 @@ function applyPhysic(obj){
     }
 
     //Check limite
-	obj.vector.x = constrain(obj.vector.x, -CST.SPEEDLIMIT, CST.SPEEDLIMIT);
-	obj.vector.y = constrain(obj.vector.y, -CST.SPEEDLIMIT, CST.SPEEDLIMIT);
+	obj.vector.x = constrain(obj.vector.x, -CST.SPEEDLIMIT.X, CST.SPEEDLIMIT.X);
+	obj.vector.y = constrain(obj.vector.y, -CST.SPEEDLIMIT.Y, CST.SPEEDLIMIT.Y);
 
     obj.x += obj.vector.x;
     obj.y += obj.vector.y;
@@ -66,37 +67,38 @@ function addCadavretoCluster(cadavre) {
 return false if no collision next tick.
 return distance between collision point and point otherwise , as a vector (.x, .y)
 */
-function getCollisionDistance(x, y, vector, orientation, obj){
+function getCollisionDistance(point, orientation, obj){
 	if(orientation == ORI.BOTTOM) {
-		if(isCollided(x-1,y+vector.y)) {
+        let xModifier = point.dx>0?-1:1;
+		if(isCollided(point.dx + obj.x + xModifier,(point.dy + obj.y)+obj.vector.y)) {
 			jumpAmount = 1; // reset jumps
 			obj.state = characterState.DEFAULT;
 			return {
-				x: vector.x,
-				y: Math.floor((y+vector.y)/32) * 32 - y,
+				x: obj.vector.x,
+				y: Math.floor((point.dy + obj.y+obj.vector.y)/32) * 32 - (point.dy + obj.y),
 			};			
 		} else {
 			obj.state = characterState.JUMPING;
 		}
 	} else if(orientation == ORI.RIGHT) {
-		if(isCollided(x+vector.x,y-1)) {
+		if(isCollided(point.dx + obj.x+obj.vector.x,point.dy + obj.y-1)) {
 			return {
-				x: Math.floor((x+vector.x)/32) * 32 - x,
-				y: vector.y,
+				x: Math.floor((point.dx + obj.x+obj.vector.x)/32) * 32 - (point.dx + obj.x),
+				y: obj.vector.y,
 			};			
 		}
 	} else if(orientation == ORI.TOP) {
-		if(isCollided(x,y+vector.y)) {
+		if(isCollided(point.dx + obj.x,point.dy + obj.y+obj.vector.y)) {
 			return {
-				x: vector.x,
-				y: Math.floor((y+vector.y)/32) * 32 + 32 - y,
+				x: obj.vector.x,
+				y: Math.floor((point.dy + obj.y+obj.vector.y)/32) * 32 + 32 - point.dy + obj.y,
 			};			
 		}
 	} else if(orientation == ORI.LEFT) {
-		if(isCollided(x+vector.x,y-1)) {
+		if(isCollided(point.dx + obj.x+obj.vector.x,point.dy + obj.y-1)) {
 			return {
-				x: Math.floor((x+vector.x)/32) * 32 + 32- x,
-				y: vector.y,
+				x: Math.floor((point.dx + obj.x+obj.vector.x)/32) * 32 + 32- (point.dx + obj.x),
+				y: obj.vector.y,
 			};			
 		}
 	}

@@ -14,7 +14,6 @@ let particles;
 let obsoleteParticles;
 
 let jumpAmount;
-let jumpPressed;
 let cadavres;
 let player;
 
@@ -41,10 +40,12 @@ const CST = {
         ENTROPY: 0.05,
     },
     GRAVITY: 0.5,
-    SPEEDLIMIT: 16,
-	JUMP_POWER: 15, // TODO: 8 ?
-	AUTOMATIC_RUN_ACC: 0.3,
-	AUTOMATIC_RUN_MAX_SPEED: 6,
+    SPEEDLIMIT: {
+        X:8,
+        Y:16,
+    },
+	JUMP_POWER: 16, 
+	AUTOMATIC_RUN_ACC: 1,
 };
 
 
@@ -122,8 +123,7 @@ function mainLoop() {
     ctx.fillText(
         width+'x'+height+
         ', fps:'+Math.floor(frameRate)+
-        ', cf:'+ currentFrame+
-        ', key:'+ jumpPressed
+        ', cf:'+ currentFrame
         , 50, 50);
     ctx.fillText(
         'offsetx :'+ offset.x +
@@ -155,9 +155,6 @@ function gameFrame() {
     // controls
 	applyControls();
 	
-	// automatic walk
-	player.vector.x += CST.AUTOMATIC_RUN_ACC;
-	if(player.vector.x > CST.AUTOMATIC_RUN_MAX_SPEED) player.vector.x = CST.AUTOMATIC_RUN_MAX_SPEED;
 	
 	// physics
 	for(let o of physicObjects) {
@@ -182,20 +179,15 @@ function getNewDeath(date) {
     });
 }
 
-function applyControls(){
-	if(jumpPressed && jumpAmount > 0) {
-		jumpAmount -= 1;
-		player.vector.y = -CST.JUMP_POWER;
-	}
-}
 
 function setCameraOffset(obj) {
 	if(obj.x-offset.x>width*0.7) offset.x+=Math.abs(obj.vector.x);
 	if(obj.x-offset.x<width*0.3) offset.x-=Math.abs(obj.vector.x);
 	if(obj.y-offset.y<height*0.3) offset.y-=Math.abs(obj.vector.y);
 	if(obj.y-offset.y>height*0.7) offset.y+=Math.abs(obj.vector.y);
-	offset.x = Math.floor(offset.x);
-	offset.y = Math.floor(offset.y);
+    // limit
+	offset.x = constrain(Math.floor(offset.x), 0, map.width*tilesProperties.size-width);
+	offset.y = min(Math.floor(offset.y),map.height*tilesProperties.size-height);
 }
 
 // UTILS //
@@ -254,22 +246,6 @@ function randomInt(min, max) {
 }
 
 
-function keyPressed(e) {
-    if(e.key == 'z' ||
-        e.key == 'ArrowUp' ||
-        e.key == ' ') {
-        jumpPressed = true;
-    }
-}
-
-function keyReleased(e) {
-    if(e.key == 'z' ||
-        e.key == 'ArrowUp' ||
-        e.key == ' ') {
-        jumpPressed = false;
-    }
-}
-
 function getFPS() {
     if(!lastTick){
         lastTick = performance.now();
@@ -291,7 +267,7 @@ function drawParticles() {
         particles[i].size -= CST.PARTICLES.ENTROPY;
         // outbound
         if(particles[i].size <= 0 ||
-            outbound(particles[i].x, particles[i].y)) {
+            outbound(particles[i].x-offset.x, particles[i].y-offset.y)) {
             obsoleteParticles.push(i);
         }
         // draw
