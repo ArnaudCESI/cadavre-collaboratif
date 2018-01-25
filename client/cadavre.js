@@ -16,6 +16,7 @@ let obsoleteParticles;
 let jumpAmount;
 let cadavres;
 let player;
+let lastDeathUpdateDate;
 
 let physicObjects = [];
 
@@ -25,6 +26,7 @@ let tilesProperties = {
 let characterProperties = {
     size: 20
 }
+let deathCooldown = 300; // TODO real death system
 let levelName = '0';
 let offset = {
     x:-30,
@@ -82,6 +84,16 @@ function launch() {
                     dy: characterProperties.size / 2,
 					orientations: [ORI.LEFT, ORI.BOTTOM]
                 },
+                {
+                    dx: characterProperties.size / 2,
+                    dy: -characterProperties.size / 2,
+					orientations: [ORI.RIGHT, ORI.TOP]
+                },
+                {
+                    dx: -characterProperties.size / 2,
+                    dy: -characterProperties.size / 2,
+					orientations: [ORI.LEFT, ORI.TOP]
+                },
             ]);
     }, levelName);
 	
@@ -132,7 +144,6 @@ function mainLoop() {
 
     // graphics
     if(map) {
-        
         drawMap();
         drawEnd(map.objects.end);
         drawCharacter(player);
@@ -163,22 +174,30 @@ function gameFrame() {
 	
 	// camera
 	setCameraOffset(player);
+    
+    deathCooldown--;
 }
 
 function onDeath() {
+    if(deathCooldown>0) {
+        return; // can't die now
+    }
     setDeath(player.x, player.y, player.rot, 'red', '', levelName);
-    getNewDeaths(new Date());
+    getNewDeaths(lastDeathUpdateDate);
+    deathCooldown = 100;
     player.x = map.objects.begin.x;
     player.y = map.objects.begin.y;
 }
+
 
 function getNewDeaths(date) {
     getDeaths(date, levelName, data=>{
         for(let c of data){
 			cadavres.push(c);
 			// add to cluster
-            addCadavretoCluster(c);
+            addCadavreToCluster(c);
         }
+        lastDeathUpdateDate = new Date();
     });
 }
 

@@ -29,6 +29,7 @@ function applyControls(){
     }
 }
 
+
 let controls = (function(){
     const CONTROLS = {
         JUMP: 1,
@@ -38,6 +39,8 @@ let controls = (function(){
     };
     const KEY_MAPPING = {
         'z':CONTROLS.JUMP,
+        'd':CONTROLS.RIGHT,
+        'q':CONTROLS.LEFT,
         'ArrowUp':CONTROLS.JUMP,
         ' ':CONTROLS.JUMP,
         'ArrowLeft':CONTROLS.LEFT,

@@ -62,8 +62,10 @@ function drawCharacter(obj) {
 }
 
 function drawCadavre(cadavre) {
+    ctx.fillStyle = 'white';
+    ctx.fillText(cadavre.cx+', '+cadavre.cy, cadavre.x-15-offset.x, cadavre.y-15-offset.y);
 	ctx.save();
-	ctx.translate(cadavre.x+characterProperties.size/2-offset.x, cadavre.y+characterProperties.size/2-offset.y);
+	ctx.translate(cadavre.x-offset.x, cadavre.y-offset.y);
 	ctx.rotate(cadavre.rot);
 	ctx.fillStyle = cadavre.color;
 	ctx.fillRect(-characterProperties.size/2, 
@@ -71,6 +73,7 @@ function drawCadavre(cadavre) {
 					characterProperties.size,
 					characterProperties.size);
 	ctx.restore();
+    
 }
 
 function drawTile(x, y) {
@@ -100,5 +103,4 @@ function drawMap(){
 		}
 	}
 }
-
 
