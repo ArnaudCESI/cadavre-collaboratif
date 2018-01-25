@@ -200,7 +200,7 @@ function getCollisionDistanceWithCadavre(point, orientation, obj, cadavre) {
 		if(intersectsWithCadavre(point.dx + obj.x+obj.vector.x,point.dy + obj.y+yModifier, cadavre)) {
 			return {
 				x: (cadavre.x+characterProperties.size/2)-(obj.x+point.dx),
-				y: 0,
+				y: obj.vector.y,
 			};			
 		}
 	}
