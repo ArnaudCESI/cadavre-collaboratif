@@ -77,7 +77,8 @@ function drawCadavre(cadavre) {
 }
 
 function drawTile(x, y) {
-	ctx.fillStyle = '#4444EE';
+	// ctx.fillStyle = '#4444EE';
+    ctx.fillStyle = `rgb(${30+x%200},${30+y%200},${230})`;
 	ctx.fillRect(x-offset.x, y-offset.y, tilesProperties.size, tilesProperties.size);
 }
 

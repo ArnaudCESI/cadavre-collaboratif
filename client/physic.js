@@ -119,8 +119,7 @@ function getCollisionDistanceWithTerrain(point, orientation, obj){
 	if(orientation == ORI.BOTTOM) {
         let xModifier = point.dx>0?-1:1;
 		if(isCollidedWithTerrain(point.dx + obj.x + xModifier,(point.dy + obj.y)+obj.vector.y)) {
-			jumpAmount = 1; // reset jumps
-			obj.state = characterState.DEFAULT;
+			onTouchGround(obj);
 			return {
 				x: obj.vector.x,
 				y: Math.floor((point.dy + obj.y+obj.vector.y)/32) * 32 - (point.dy + obj.y),
@@ -172,8 +171,7 @@ function getCollisionDistanceWithCadavre(point, orientation, obj, cadavre) {
     if(orientation == ORI.BOTTOM) {
         let xModifier = point.dx>0?-1:1;
 		if(intersectsWithCadavre(point.dx + obj.x + xModifier,(point.dy + obj.y)+obj.vector.y, cadavre)) {
-			jumpAmount = 1; // reset jumps
-			obj.state = characterState.DEFAULT;
+            onTouchGround(obj);
 			return {
 				x: obj.vector.x,
 				y: (cadavre.y-characterProperties.size/2)-(obj.y+point.dy),

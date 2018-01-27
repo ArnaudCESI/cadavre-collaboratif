@@ -17,6 +17,7 @@ let jumpAmount;
 let cadavres;
 let player;
 let lastDeathUpdateDate;
+let isDead;
 
 let physicObjects = [];
 
@@ -43,8 +44,8 @@ const CST = {
     },
     GRAVITY: 0.5,
     SPEEDLIMIT: {
-        X:8,
-        Y:16,
+        X:4,
+        Y:8,
     },
 	JUMP_POWER: 16, 
 	AUTOMATIC_RUN_ACC: 1,
@@ -164,7 +165,9 @@ function mainLoop() {
 // GAME MECHANICS //
 function gameFrame() {
     // controls
-	applyControls();
+    if(!isDead) {
+	   applyControls(); 
+    }
 	
 	
 	// physics
@@ -178,17 +181,34 @@ function gameFrame() {
     deathCooldown--;
 }
 
+function onTouchGround(obj) {
+    if(isDead) {
+        // die
+        setDeath(player.x, player.y, player.rot, 'red', '', levelName);
+        reinitPlayer();
+    } else {
+        jumpAmount = 1; // reset jumps
+        obj.state = characterState.DEFAULT;
+    }
+}
+
 function onDeath() {
     if(deathCooldown>0) {
         return; // can't die now
     }
-    setDeath(player.x, player.y, player.rot, 'red', '', levelName);
-    getNewDeaths(lastDeathUpdateDate);
-    deathCooldown = 100;
-    player.x = map.objects.begin.x;
-    player.y = map.objects.begin.y;
+    
+    isDead = true; // will realy die when the ground is touched
 }
 
+function reinitPlayer() {
+    getNewDeaths(lastDeathUpdateDate);
+    deathCooldown = 100;
+    isDead = false;
+    player.x = map.objects.begin.x;
+    player.y = map.objects.begin.y;
+    offset.x = 0;
+    offset.y = -338;
+}
 
 function getNewDeaths(date) {
     getDeaths(date, levelName, data=>{
